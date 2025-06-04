@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>1초 회전 초시계</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background-color: #eef9f1;
+    }
+
+    .container {
+      display: flex;
+      gap: 40px;
+      align-items: center;
+    }
+
+    .record-list {
+      width: 180px;
+      background: #ffffff;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.1);
+      height: 400px;
+      overflow-y: auto;
+    }
+
+    .record-list h3 {
+      margin-top: 0;
+      font-size: 1.2rem;
+      text-align: center;
+      color: #2c3e50;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 6px;
+    }
+
+    .record-list ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .record-list li {
+      font-size: 0.95rem;
+      padding: 6px;
+      border-bottom: 1px dashed #ccc;
+    }
+
+    .main-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h1 {
+      margin-bottom: 10px;
+      font-size: 2rem;
+      color: #333;
+    }
+
+    #digital {
+      font-size: 2.2rem;
+      font-weight: bold;
+      margin-bottom: 25px;
+      letter-spacing: 1px;
+      color: #2c3e50;
+    }
+
+    .clock {
+      position: relative;
+      width: 300px;
+      height: 300px;
+      border: 10px solid #34495e;
+      border-radius: 50%;
+      background-color: #d5f7df;
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
+    }
+
+    #center {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 12px;
+      height: 12px;
+      background: #2c3e50;
+      border: 2px solid white;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 10;
+    }
+
+    #sec {
+      position: absolute;
+      width: 4px;
+      height: 140px;
+      top: 10px;
+      left: 50%;
+      transform-origin: bottom center;
+      background: linear-gradient(to top, red, darkred);
+      box-shadow: 0 0 8px rgba(255, 0, 0, 0.5);
+      border-radius: 2px;
+      transform: rotate(0deg);
+    }
+
+    .buttons {
+      margin-top: 30px;
+    }
+
+    .buttons button {
+      padding: 10px 16px;
+      margin: 5px;
+      font-size: 1rem;
+      cursor: pointer;
+      border: none;
+      border-radius: 6px;
+      background-color: #27ae60;
+      color: white;
+      transition: background-color 0.2s ease;
+    }
+
+    .buttons button:hover {
+      background-color: #219150;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="record-list">
+      <h3>정지 기록</h3>
+      <ul id="recordUl"></ul>
+    </div>
+
+    <div class="main-content">
+      <h1>1초 회전 초시계</h1>
+      <div id="digital">00:00:00.000</div>
+      <div class="clock">
+        <div id="center"></div>
+        <div id="sec"></div>
+      </div>
+      <div class="buttons">
+        <button onclick="startTimer()">시작</button>
+        <button onclick="stopTimer()">정지</button>
+        <button onclick="resetTimer()">초기화</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let startTime = 0;
+    let elapsedTime = 0;
+    let timerId = null;
+
+    function updateDisplay() {
+      const time = new Date(elapsedTime);
+      const hours = String(time.getUTCHours()).padStart(2, '0');
+      const minutes = String(time.getUTCMinutes()).padStart(2, '0');
+      const seconds = String(time.getUTCSeconds()).padStart(2, '0');
+      const milliseconds = String(time.getUTCMilliseconds()).padStart(3, '0');
+
+      document.getElementById('digital').textContent = `${hours}:${minutes}:${seconds}.${milliseconds}`;
+
+      const msFraction = (elapsedTime % 1000) / 1000;
+      const deg = msFraction * 360;
+      document.getElementById('sec').style.transform = `rotate(${deg}deg)`;
+    }
+
+    function startTimer() {
+      if (timerId) return;
+      startTime = Date.now() - elapsedTime;
+      timerId = setInterval(() => {
+        elapsedTime = Date.now() - startTime;
+        updateDisplay();
+      }, 10);
+    }
+
+    function stopTimer() {
+      clearInterval(timerId);
+      timerId = null;
+      const record = document.getElementById('digital').textContent;
+      const ul = document.getElementById('recordUl');
+      const li = document.createElement('li');
+      li.textContent = record;
+      ul.prepend(li); // 최신 기록이 위로
+    }
+
+    function resetTimer() {
+      clearInterval(timerId);
+      timerId = null;
+      elapsedTime = 0;
+      document.getElementById('digital').textContent = `00:00:00.000`;
+      document.getElementById('sec').style.transform = `rotate(0deg)`;
+    }
+  </script>
+</body>
+</html>
+
+
