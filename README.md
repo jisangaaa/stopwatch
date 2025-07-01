@@ -9,5 +9,8 @@ HTML, CSS, 순수 JavaScript를 활용해 제작한 초 단위 회전형 디지�
 
 반응형 디자인 적용 및 사용성 개선을 위한 UI 설계
 
+![image](https://github.com/user-attachments/assets/378c90cc-93ad-4bf6-8801-0e805c356c2f)
+
+
 💻 GitHub: github.com/jisangaaa/stopwatch
 🛠 기술스택: HTML / CSS / JavaScript
